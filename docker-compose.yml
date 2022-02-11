@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+
+  web:
+    build: ./back
+    command: uvicorn app:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    volumes:
+      - ./back:/usr/src/app
+    ports:
+      - 8004:8000
+    environment:
+      - ENVIRONMENT=dev
+      - TESTING=0
+
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    volumes:
+      - './front:/var/app'
+      - '/var/app/node_modules'
+    ports:
+      - 3001:3000
+    environment:
+      - WDS_SOCKET_PORT=0
+      - CHOKIDAR_USEPOLLING=true

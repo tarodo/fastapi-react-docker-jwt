@@ -1,10 +1,12 @@
+from datetime import timedelta
+from pprint import pprint
+
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.responses import JSONResponse
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-
 
 app = FastAPI()
 app.add_middleware(
@@ -23,8 +25,10 @@ class User(BaseModel):
 
 class Settings(BaseModel):
     authjwt_secret_key: str = "super_secret"
+    authjwt_access_token_expires = timedelta(minutes=2)
+    authjwt_refresh_token_expires = timedelta(days=10)
     authjwt_token_location: set = {"cookies"}
-    authjwt_cookie_secure: bool = False
+    authjwt_cookie_secure: bool = False  # If the secure flag is True cookie can only be transmitted securely over HTTPS
     authjwt_cookie_csrf_protect: bool = True
     authjwt_cookie_samesite: str = 'lax'
 
@@ -57,8 +61,8 @@ def login(user: User, Authorize: AuthJWT = Depends()):
 
 @app.post('/refresh')
 def refresh(Authorize: AuthJWT = Depends()):
-    Authorize.jwt_refresh_token_required()
-
+    Authorize.jwt_required()
+    print(123)
     current_user = Authorize.get_jwt_subject()
     new_access_token = Authorize.create_access_token(subject=current_user)
     Authorize.set_access_cookies(new_access_token)

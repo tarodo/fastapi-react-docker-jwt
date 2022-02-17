@@ -70,7 +70,15 @@ const MainPage = () => {
         setTestResult("");
         setCsrf(getItem("csrf_access_token"))
       }
-    })
+    }).catch((e) => {
+      if (e.response) {
+        console.log(e.response)
+        if (e.response.status === 422) {
+          console.log(e.response.data)
+          setTestResult(e.response.data["detail"]);
+        }
+      }
+    });
   }
 
   return (

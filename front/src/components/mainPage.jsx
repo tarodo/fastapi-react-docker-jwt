@@ -37,7 +37,8 @@ const MainPage = () => {
 
   const refresh_token = () => {
     console.log(getItem("csrf_access_token"))
-    instance.post(`refresh`, {},{headers: {'X-CSRF-Token': getItem("csrf_access_token")}}).then((res) => {
+    console.log(getItem("csrf_refresh_token"))
+    instance.post(`refresh`, {},{headers: {'X-CSRF-Token': getItem("csrf_refresh_token")}}).then((res) => {
       if (res && res.status === 200) {
         setCsrf(getItem("csrf_access_token"));
       }
@@ -52,7 +53,13 @@ const MainPage = () => {
         setTestResult(res.data["user"].toString());
       }
     }).catch((e) => {
-
+      if (e.response) {
+        console.log(e.response)
+        if (e.response.status === 422) {
+          console.log(e.response.data)
+          setTestResult(e.response.data["detail"]);
+        }
+      }
     });
   }
 

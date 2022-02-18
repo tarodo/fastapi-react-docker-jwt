@@ -1,5 +1,4 @@
 from datetime import timedelta
-from pprint import pprint
 
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.responses import JSONResponse
@@ -31,6 +30,7 @@ class Settings(BaseModel):
     authjwt_cookie_secure: bool = False  # If the secure flag is True cookie can only be transmitted securely over HTTPS
     authjwt_cookie_csrf_protect: bool = True
     authjwt_cookie_samesite: str = 'lax'
+    # authjwt_refresh_csrf_cookie_path: str = '/refresh'
 
 
 @AuthJWT.load_config
